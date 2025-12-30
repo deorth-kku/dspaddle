@@ -29,6 +29,16 @@ func main() {
 		slog.Warn("failed when setting log", "err", err)
 	}
 
+	if IsDLL {
+		exe, err := os.Executable()
+		if err == nil {
+			slog.Info("loaded as dll", "exe", exe)
+		} else {
+			slog.Warn("failed to read exe path", "err", err)
+		}
+
+	}
+
 	act := NewActionState(NewScanCodeAction(cfg.Keys))
 
 	controllers := gods4.Find()
