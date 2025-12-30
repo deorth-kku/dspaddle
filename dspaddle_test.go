@@ -68,27 +68,3 @@ func TestComboKey(t *testing.T) {
 	time.Sleep(time.Microsecond)
 	SendInput(up)
 }
-
-func TestSendVK(t *testing.T) {
-	hwnd, _, _ := procGetForegroundWindow.Call()
-
-	key, _ := ParseVK("T")
-
-	for range 10 {
-		SendVK(hwnd, key)
-		time.Sleep(time.Millisecond)
-		SendVK(hwnd, key.ToUp())
-		time.Sleep(time.Second)
-	}
-}
-
-func TestSendChar(t *testing.T) {
-	hwnd, _, _ := procGetForegroundWindow.Call()
-
-	key, _ := ParseVK("T")
-
-	for range 10 {
-		SendChar(hwnd, key)
-		time.Sleep(time.Second)
-	}
-}

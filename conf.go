@@ -64,15 +64,7 @@ type LogConfig struct {
 type KeysConfig struct {
 	Left  StringList `json:"left,omitzero"`
 	Right StringList `json:"right,omitzero"`
-	Mode  Mode       `json:"mode,omitzero"`
 }
-
-type Mode uint
-
-const (
-	ModeSendInput = iota
-	ModePostMessage
-)
 
 type Config struct {
 	Log  LogConfig  `json:"log,omitzero"`
