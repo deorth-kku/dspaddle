@@ -98,7 +98,7 @@ func SendInput(inputs []INPUT) uint32 {
 }
 
 type ScanCodeKey struct {
-	ScanCode uint16
+	Code     uint16
 	IsExtKey bool
 	IsKeyUp  bool
 }
@@ -120,9 +120,9 @@ func ParseScanCodeKey(s string) (ScanCodeKey, bool) {
 		return ScanCodeKey{}, false
 	}
 	if s == "NUM ENTER" {
-		return ScanCodeKey{ScanCode: VkToScanCode(vk), IsExtKey: true}, true
+		return ScanCodeKey{Code: VkToScanCode(vk), IsExtKey: true}, true
 	}
-	return ScanCodeKey{ScanCode: VkToScanCode(vk), IsExtKey: IsExtendedKey(vk)}, true
+	return ScanCodeKey{Code: VkToScanCode(vk), IsExtKey: IsExtendedKey(vk)}, true
 }
 
 func GroupConv[I, O any](parse func(i I) O, ins []I) (os []O) {
@@ -162,8 +162,8 @@ func (key ScanCodeKey) ToInput() INPUT {
 	return INPUT{
 		Type: INPUT_KEYBOARD,
 		Ki: KEYBDINPUT{
-			WVk:     0,            // 使用扫描码时，Virtual Key 设为 0
-			WScan:   key.ScanCode, // 这里填入硬件扫描码，如 0x11 代表 'W'
+			WVk:     0,        // 使用扫描码时，Virtual Key 设为 0
+			WScan:   key.Code, // 这里填入硬件扫描码，如 0x11 代表 'W'
 			DwFlags: dwFlags,
 		},
 	}
