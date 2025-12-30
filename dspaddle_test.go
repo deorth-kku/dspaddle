@@ -54,3 +54,17 @@ func TestAltTab(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestComboKey(t *testing.T) {
+	down := []INPUT{altdown.ToInput(), tabdown.ToInput()}
+	up := []INPUT{altup.ToInput(), altup.ToInput()}
+	SendInput(down)
+	time.Sleep(time.Microsecond)
+	SendInput(up)
+
+	time.Sleep(time.Second)
+
+	SendInput(down)
+	time.Sleep(time.Microsecond)
+	SendInput(up)
+}
