@@ -1,0 +1,9 @@
+github.com/deorth-kku/go-common v0.0.0-20251128053826-d2bae170c0c5 h1:1+4j/FK08P4oX5wS5KPY4Hx5CkUOAmW13zOlRGRxQ5E=
+github.com/deorth-kku/go-common v0.0.0-20251128053826-d2bae170c0c5/go.mod h1:wu1n859VPJwzWyY3WPzGM21PFeKq+YY79e92QoaGFPk=
+github.com/kpeu3i/gods4 v1.0.0 h1:Yv4dBxZI3Jf2wRtDmBGvUBB7GxoqBgIZBGahegi42Qs=
+github.com/kpeu3i/gods4 v1.0.0/go.mod h1:Szzn0XfzbcZy19GDoOsnRGiF9c1KmBgWJ1px62tF6rE=
+github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
+github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+github.com/stamp/hid v0.0.0-20190105143849-bc55d7d13ce1 h1:BG7MhC3qshAG6YSA1JiTFdQwXoOSmkAD9jHxfwIwcRM=
+github.com/stamp/hid v0.0.0-20190105143849-bc55d7d13ce1/go.mod h1:8a9qaZSBHmyhaqWfYpMnsvd4paEG6AGdl1TAy+gQkd4=
