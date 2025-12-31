@@ -56,7 +56,7 @@ var (
 
 func (a *ActionState) Callback(data any) error {
 	touch := data.(gods4.Touchpad)
-	if touch.Swipe[0].X == touch.Swipe[1].X && touch.Swipe[0].Y == touch.Swipe[1].Y {
+	if touch.Swipe[0].IsActive && touch.Swipe[0].X == touch.Swipe[1].X && touch.Swipe[0].Y == touch.Swipe[1].Y {
 		touch.Swipe = touch.Swipe[:1]
 	}
 	for _, swipe := range touch.Swipe {

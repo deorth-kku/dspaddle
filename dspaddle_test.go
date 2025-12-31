@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log/slog"
 	"testing"
 	"time"
 
@@ -22,31 +23,36 @@ var (
 )
 
 func (testAction) touchleft() {
+	slog.Info("touchleft")
 	SendScanCode(altdown)
 
 }
 
 func (testAction) releaseleft() {
+	slog.Info("releaseleft")
 	SendScanCode(altup)
 
 }
 
 func (testAction) touchright() {
+	slog.Info("touchright")
 	SendScanCode(tabdown)
 }
 
 func (testAction) releaseright() {
+	slog.Info("releaseright")
 	SendScanCode(tabup)
 }
 
 func TestAltTab(t *testing.T) {
+	common.SetLog("", "DEBUG", "TEXT")
 	controller := gods4.Find()[0]
 	err := controller.Connect()
 	if err != nil {
 		t.Error(err)
 	}
 	controller.On(gods4.EventTouchpadSwipe, NewActionState(testAction{}).Callback)
-	time.AfterFunc(10*time.Second, func() {
+	time.AfterFunc(29*time.Second, func() {
 		controller.Disconnect()
 	})
 	err = controller.Listen()
