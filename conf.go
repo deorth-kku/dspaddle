@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json/jsontext"
 	"encoding/json/v2"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path"
 
@@ -87,7 +89,12 @@ func GetConfig() (*Config, error) {
 	dir := path.Dir(exe)
 	conf := path.Join(dir, "dspaddle.json")
 	f, err := os.Open(conf)
-	if err != nil {
+	switch {
+	case errors.Is(err, fs.ErrNotExist):
+		appdata := os.Getenv("APPDATA")
+		conf = path.Join(appdata, "dspaddle", "dspaddle.json")
+		f, err = os.Open(conf)
+	case err != nil:
 		return nil, fmt.Errorf("fail when open config file %s, err: %w", conf, err)
 	}
 	defer f.Close()
