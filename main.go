@@ -40,7 +40,7 @@ func main() {
 	}
 
 	act := NewActionState(NewScanCodeAction(cfg.Keys))
-
+	buttons := NewButtonActions(cfg.Keys)
 	controllers := gods4.Find()
 	if len(controllers) == 0 {
 		slog.Warn("No connected DS4 controllers found")
@@ -71,6 +71,9 @@ func main() {
 		slog.Info("connected conntroller", "num", i, "name", controller.Name())
 
 		controller.On(gods4.EventTouchpadSwipe, NewActionState(act).Callback)
+		for k, v := range buttons.Range {
+			controller.On(k, v)
+		}
 		wg.Go(func() {
 			slog.Info("controller listen thread exit", "error", controller.Listen())
 		})

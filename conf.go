@@ -64,9 +64,10 @@ type LogConfig struct {
 }
 
 type KeysConfig struct {
-	Left  StringList `json:"left,omitzero"`
-	Right StringList `json:"right,omitzero"`
-	Mode  Mode       `json:"mode,omitzero"`
+	Left    StringList            `json:"left,omitzero"`
+	Right   StringList            `json:"right,omitzero"`
+	Mode    Mode                  `json:"mode,omitzero"`
+	Buttons map[string]StringList `json:",unknown"`
 }
 
 type Mode uint

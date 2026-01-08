@@ -6,41 +6,41 @@ import (
 	"github.com/kpeu3i/gods4"
 )
 
-type ActionIf interface {
+type PaddleAction interface {
 	touchleft()
 	releaseleft()
 	touchright()
 	releaseright()
 }
 
-type ActionState struct {
+type PaddleState struct {
 	leftPressed  atomic.Bool
 	rightPressed atomic.Bool
-	cbs          ActionIf
+	cbs          PaddleAction
 }
 
-func (a *ActionState) touchleft() {
+func (a *PaddleState) touchleft() {
 	if !a.leftPressed.Load() {
 		a.leftPressed.Store(true)
 		a.cbs.touchleft()
 	}
 }
 
-func (a *ActionState) releaseleft() {
+func (a *PaddleState) releaseleft() {
 	if a.leftPressed.Load() {
 		a.leftPressed.Store(false)
 		a.cbs.releaseleft()
 	}
 }
 
-func (a *ActionState) touchright() {
+func (a *PaddleState) touchright() {
 	if !a.rightPressed.Load() {
 		a.rightPressed.Store(true)
 		a.cbs.touchright()
 	}
 }
 
-func (a *ActionState) releaseright() {
+func (a *PaddleState) releaseright() {
 	if a.rightPressed.Load() {
 		a.rightPressed.Store(false)
 		a.cbs.releaseright()
@@ -54,7 +54,7 @@ var (
 	releaseRight = gods4.Touch{IsActive: false, X: 175, Y: 80}
 )
 
-func (a *ActionState) Callback(data any) error {
+func (a *PaddleState) Callback(data any) error {
 	touch := data.(gods4.Touchpad)
 	if touch.Swipe[0].X == touch.Swipe[1].X && touch.Swipe[0].Y == touch.Swipe[1].Y {
 		touch.Swipe = touch.Swipe[:1]
@@ -74,8 +74,8 @@ func (a *ActionState) Callback(data any) error {
 	return nil
 }
 
-func NewActionState(do ActionIf) *ActionState {
-	return &ActionState{cbs: do}
+func NewActionState(do PaddleAction) *PaddleState {
+	return &PaddleState{cbs: do}
 }
 
 type scanCodeAction struct {
@@ -113,7 +113,7 @@ func parseINPUTs(list StringList) []INPUT {
 	return inputs
 }
 
-func NewScanCodeAction(keys KeysConfig) ActionIf {
+func NewScanCodeAction(keys KeysConfig) PaddleAction {
 	act := scanCodeAction{
 		leftdown:  parseINPUTs(keys.Left),
 		rightdown: parseINPUTs(keys.Right),
