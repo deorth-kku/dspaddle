@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log/slog"
 	"testing"
 	"time"
 
@@ -90,5 +91,71 @@ func TestSendChar(t *testing.T) {
 	for range 10 {
 		SendChar(hwnd, key)
 		time.Sleep(time.Second)
+	}
+}
+
+func TestButtions(t *testing.T) {
+	controller := gods4.Find()[0]
+	err := controller.Connect()
+	if err != nil {
+		t.Error(err)
+	}
+	keys := []gods4.Event{
+		"cross.press",
+		"cross.release",
+		"circle.press",
+		"circle.release",
+		"square.press",
+		"square.release",
+		"triangle.press",
+		"triangle.release",
+		"l1.press",
+		"l1.release",
+		"l2.press",
+		"l2.release",
+		"l3.press",
+		"l3.release",
+		"r1.press",
+		"r1.release",
+		"r2.press",
+		"r2.release",
+		"r3.press",
+		"r3.release",
+		"dpad_up.press",
+		"dpad_up.release",
+		"dpad_down.press",
+		"dpad_down.release",
+		"dpad_left.press",
+		"dpad_left.release",
+		"dpad_right.press",
+		"dpad_right.release",
+		"share.press",
+		"share.release",
+		"options.press",
+		"options.release",
+		"touchpad.swipe",
+		"touchpad.press",
+		"touchpad.release",
+		"ps.press",
+		"ps.release",
+		"left_stick.move",
+		"right_stick.move",
+		"accelerometer.update",
+		"gyroscope.update",
+		"battery.update",
+	}
+	for _, e := range keys {
+		controller.On(e, func(_ any) error {
+			slog.Warn(string(e))
+			return nil
+		})
+	}
+
+	time.AfterFunc(10*time.Second, func() {
+		controller.Disconnect()
+	})
+	err = controller.Listen()
+	if err != nil {
+		t.Error(err)
 	}
 }

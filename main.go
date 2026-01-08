@@ -72,6 +72,7 @@ func main() {
 
 		controller.On(gods4.EventTouchpadSwipe, NewActionState(act).Callback)
 		for k, v := range buttons.Range {
+			slog.Debug("register action", "event", k)
 			controller.On(k, v)
 		}
 		wg.Go(func() {
