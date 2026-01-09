@@ -78,8 +78,9 @@ const (
 )
 
 type Config struct {
-	Log  LogConfig  `json:"log,omitzero"`
-	Keys KeysConfig `json:"keys,omitzero"`
+	Log   LogConfig  `json:"log,omitzero"`
+	Keys  KeysConfig `json:"keys,omitzero"`
+	Slots List[int]  `json:"slots,omitzero"`
 }
 
 func GetConfig() (*Config, error) {

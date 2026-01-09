@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"slices"
 	"sync"
 	"syscall"
 
@@ -58,6 +59,10 @@ func main() {
 
 	var wg sync.WaitGroup
 	for i, controller := range controllers {
+		if len(cfg.Slots) > 0 && !slices.Contains(cfg.Slots, i) {
+			slog.Info("skipping controller", "num", i)
+			continue
+		}
 		err := controller.Connect()
 		if err != nil {
 			slog.Warn("failed to connect to controller", "num", i, "err", err)
