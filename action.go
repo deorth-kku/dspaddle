@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log/slog"
 	"sync/atomic"
 
 	"github.com/kpeu3i/gods4"
@@ -113,7 +114,31 @@ func parseINPUTs(list StringList) []INPUT {
 	return inputs
 }
 
+type debugAction struct{}
+
+func (debugAction) touchleft() {
+	slog.Debug("left paddle pressed")
+}
+
+func (debugAction) releaseleft() {
+	slog.Debug("left paddle released")
+}
+
+func (debugAction) touchright() {
+	slog.Debug("right paddle pressed")
+}
+
+func (debugAction) releaseright() {
+	slog.Debug("right paddle released")
+}
+
 func NewScanCodeAction(keys KeysConfig) PaddleAction {
+	switch keys.Mode {
+	case ModeSendInput:
+	case ModeDebug:
+		return debugAction{}
+	}
+
 	act := scanCodeAction{
 		leftdown:  parseINPUTs(keys.Left),
 		rightdown: parseINPUTs(keys.Right),

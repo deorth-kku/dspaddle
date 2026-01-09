@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log/slog"
+
 	"github.com/deorth-kku/go-common"
 	"github.com/kpeu3i/gods4"
 )
@@ -47,13 +49,30 @@ func (ba ButtonActions) Range(y common.Yield2[gods4.Event, gods4CB]) {
 	}
 }
 
+type debugButton string
+
+func (s debugButton) Press(_ any) error {
+	slog.Debug("button pressed", "key", s)
+	return nil
+}
+
+func (s debugButton) Release(_ any) error {
+	slog.Debug("button released", "key", s)
+	return nil
+}
+
 func NewButtonActions(keys KeysConfig) ButtonActions {
 	if keys.Buttons == nil {
 		return nil
 	}
 	m := make(ButtonActions, len(keys.Buttons))
 	for k, v := range keys.Buttons {
-		m[k] = NewButtonAction(v)
+		switch keys.Mode {
+		case ModeSendInput:
+			m[k] = NewButtonAction(v)
+		case ModeDebug:
+			m[k] = debugButton(k)
+		}
 	}
 	return m
 }

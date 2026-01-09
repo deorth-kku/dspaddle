@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"math"
 	"os"
 	"path"
 
@@ -75,6 +76,8 @@ type Mode uint
 const (
 	ModeSendInput = iota
 	ModePostMessage
+
+	ModeDebug = math.MaxUint
 )
 
 type Config struct {
