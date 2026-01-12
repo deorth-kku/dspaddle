@@ -11,10 +11,6 @@ import (
 const (
 	VendorID  = 0x3537
 	ProductID = 0x1093
-
-	PaddleByte = 14
-	LeftBit    = 2
-	RightBit   = 3
 )
 
 func IsBitSet(data []byte, byteIdx int, bitIdx uint8) bool {
@@ -26,21 +22,14 @@ func IsBitSet(data []byte, byteIdx int, bitIdx uint8) bool {
 
 type Callback = func()
 
-const (
-	EventLeftPaddlePress = iota
-	EventLeftPaddleRelease
-	EventRightPaddlePress
-	EventRightPaddleRelease
-
-	bufSize = 64
-)
+const bufSize = 64
 
 type Device struct {
 	*hid.Device
 	*hid.DeviceInfo
 	errch     <-chan error
 	exit      atomic.Bool
-	callbacks [4]Callback
+	callbacks [keysCount * 2]Callback
 
 	lastdata [bufSize]byte
 }
@@ -73,22 +62,6 @@ func (d *Device) Connect() error {
 	d.Device = f
 	d.DeviceInfo = &f.DeviceInfo
 	return nil
-}
-
-type keyoffset = struct {
-	B int
-	b uint8
-}
-
-var keys = [...]keyoffset{
-	{
-		B: PaddleByte,
-		b: LeftBit,
-	},
-	{
-		B: PaddleByte,
-		b: RightBit,
-	},
 }
 
 func (d *Device) Listen() error {
@@ -136,14 +109,24 @@ func (d *Device) Listen() error {
 	return nil
 }
 
-func (d *Device) On(event int, cb Callback) {
-	if event > len(d.callbacks) {
+func (d *Device) On(event Event, cb Callback) {
+	if int(event) > len(d.callbacks) {
 		return
 	}
 	d.callbacks[event] = cb
 }
 
 func (d *Device) Disconnect() error {
+	if d.Device == nil {
+		return common.ErrorString("no connected")
+	}
+	err := d.Device.Close()
+	if err != nil {
+		return err
+	}
+	if d.errch == nil {
+		return nil
+	}
 	d.exit.Store(true)
 	return <-d.errch
 }

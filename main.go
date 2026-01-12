@@ -83,7 +83,7 @@ func main() {
 		ds4.On(gods4.EventTouchpadSwipe, NewActionState(act).Callback)
 		for k, v := range buttons.Range {
 			slog.Debug("register action", "event", k)
-			ds4.On(k, v)
+			ds4.On(gods4.Event(k), v)
 		}
 		wg.Go(func() {
 			slog.Info("ds4 controller listen thread exit", "error", ds4.Listen())
@@ -106,6 +106,13 @@ func main() {
 		xb.On(xbox.EventLeftPaddleRelease, act.releaseleft)
 		xb.On(xbox.EventRightPaddlePress, act.touchright)
 		xb.On(xbox.EventRightPaddleRelease, act.releaseright)
+
+		for k, v := range buttons.Range {
+			slog.Debug("register action", "event", k)
+			xb.On(xbox.ParseEvent(k), func() {
+				v(nil)
+			})
+		}
 
 		wg.Go(func() {
 			slog.Info("xbox controller listen thread exit", "error", xb.Listen())

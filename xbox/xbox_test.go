@@ -1,9 +1,12 @@
 package xbox
 
 import (
+	"fmt"
 	"log/slog"
 	"testing"
 	"time"
+
+	"github.com/deorth-kku/go-common"
 )
 
 func TestXbox(t *testing.T) {
@@ -40,5 +43,41 @@ func TestXbox(t *testing.T) {
 	err = dev.Listen()
 	if err != nil {
 		t.Error(err)
+	}
+}
+
+func TestXboxKey(t *testing.T) {
+	devs := Find()
+	if len(devs) == 0 {
+		t.Error("failed to find devices")
+		return
+	}
+	dev := devs[0]
+	f, err := dev.Open()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	defer f.Close()
+
+	var data, newdata [64]byte
+	common.Must(f.Read(data[:]))
+
+	newdata = data
+	for newdata == data {
+		common.Must(f.Read(newdata[:]))
+	}
+	for i, v := range newdata {
+		if v == data[i] {
+			continue
+		}
+		newv := data[i]
+		for j := range 8 {
+			mask := byte(1 << j)
+			if v&mask != newv&mask {
+				fmt.Printf("you've press key on byte:%d, bit:%d \n", i, j)
+			}
+		}
+
 	}
 }
