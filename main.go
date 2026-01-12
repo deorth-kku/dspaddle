@@ -109,7 +109,12 @@ func main() {
 
 		for k, v := range buttons.Range {
 			slog.Debug("register action", "event", k)
-			xb.On(xbox.ParseEvent(k), func() {
+			event := xbox.ParseEvent(k)
+			if event < 0 {
+				slog.Warn("invalid event, skipping", "event", event)
+				continue
+			}
+			xb.On(event, func() {
 				v(nil)
 			})
 		}
