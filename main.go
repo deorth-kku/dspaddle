@@ -1,6 +1,7 @@
 package main
 
 import (
+	"dspaddle/xbox"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -40,10 +41,11 @@ func main() {
 
 	}
 
-	act := NewActionState(NewScanCodeAction(cfg.Keys))
+	act := NewScanCodeAction(cfg.Keys)
 	buttons := NewButtonActions(cfg.Keys)
-	controllers := gods4.Find()
-	if len(controllers) == 0 {
+	ds4s := gods4.Find()
+	xboxs := xbox.Find()
+	if len(ds4s)+len(xboxs) == 0 {
 		slog.Warn("No connected DS4 controllers found")
 		return
 	}
@@ -52,37 +54,63 @@ func main() {
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		<-signals
-		for i, c := range controllers {
-			slog.Info("disconnecting controller", "num", i, "name", c.Name(), "type", c.ConnectionType(), "err", c.Disconnect())
+		for i, c := range ds4s {
+			slog.Info("disconnecting dualshock 4", "num", i, "name", c.Name(), "type", c.ConnectionType(), "err", c.Disconnect())
+		}
+		for i, c := range xboxs {
+			slog.Info("disconnecting dualshock 4", "num", i, "name", c.DeviceInfo.Product, "err", c.Disconnect())
 		}
 	}()
 
 	var wg sync.WaitGroup
-	for i, controller := range controllers {
+	for i, ds4 := range ds4s {
 		if len(cfg.Slots) > 0 && !slices.Contains(cfg.Slots, i) {
-			slog.Info("skipping controller", "num", i)
+			slog.Info("skipping ds4 controller", "num", i)
 			continue
 		}
-		err := controller.Connect()
+		err := ds4.Connect()
 		if err != nil {
-			slog.Warn("failed to connect to controller", "num", i, "err", err)
+			slog.Warn("failed to connect to ds4 controller", "num", i, "err", err)
 			continue
 		}
-		if controller.ConnectionType() != gods4.ConnectionTypeUSB {
-			slog.Info("disconnecting non-USB controller", "num", i, "name", controller.Name(), "type", controller.ConnectionType(), "err", controller.Disconnect())
+		if ds4.ConnectionType() != gods4.ConnectionTypeUSB {
+			slog.Info("disconnecting non-USB ds4 controller", "num", i, "name", ds4.Name(), "type", ds4.ConnectionType(), "err", ds4.Disconnect())
 			continue
 		}
 
-		slog.Info("connected conntroller", "num", i, "name", controller.Name())
+		slog.Info("connected ds4 conntroller", "num", i, "name", ds4.Name())
 
-		controller.On(gods4.EventTouchpadSwipe, NewActionState(act).Callback)
+		ds4.On(gods4.EventTouchpadSwipe, NewActionState(act).Callback)
 		for k, v := range buttons.Range {
 			slog.Debug("register action", "event", k)
-			controller.On(k, v)
+			ds4.On(k, v)
 		}
 		wg.Go(func() {
-			slog.Info("controller listen thread exit", "error", controller.Listen())
+			slog.Info("ds4 controller listen thread exit", "error", ds4.Listen())
 		})
 	}
+	for i, xb := range xboxs {
+		if len(cfg.Slots) > 0 && !slices.Contains(cfg.Slots, i) {
+			slog.Info("skipping xbox controller", "num", i)
+			continue
+		}
+		err := xb.Connect()
+		if err != nil {
+			slog.Warn("failed to connect to xbox controller", "num", i, "err", err)
+			continue
+		}
+
+		slog.Info("connected xbox conntroller", "num", i, "name", xb.Product)
+
+		xb.On(xbox.EventLeftPaddlePress, act.touchleft)
+		xb.On(xbox.EventLeftPaddleRelease, act.releaseleft)
+		xb.On(xbox.EventRightPaddlePress, act.touchright)
+		xb.On(xbox.EventRightPaddleRelease, act.releaseright)
+
+		wg.Go(func() {
+			slog.Info("xbox controller listen thread exit", "error", xb.Listen())
+		})
+	}
+
 	wg.Wait()
 }
