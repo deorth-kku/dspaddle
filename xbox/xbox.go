@@ -5,7 +5,7 @@ import (
 	"sync/atomic"
 
 	"github.com/deorth-kku/go-common"
-	"github.com/stamp/hid"
+	"github.com/karalabe/hid"
 )
 
 const (
@@ -25,7 +25,7 @@ type Callback = func()
 const bufSize = 64
 
 type Device struct {
-	*hid.Device
+	hid.Device
 	*hid.DeviceInfo
 	errch     <-chan error
 	exit      atomic.Bool
@@ -35,8 +35,8 @@ type Device struct {
 }
 
 func Find() []*Device {
-	infos := hid.Enumerate(VendorID, ProductID)
-	if len(infos) == 0 {
+	infos, err := hid.Enumerate(VendorID, ProductID)
+	if err != nil || len(infos) == 0 {
 		return nil
 	}
 	devs := make([]*Device, 0, len(infos))
@@ -60,7 +60,6 @@ func (d *Device) Connect() error {
 		return fmt.Errorf("failed to open hid device: %w", err)
 	}
 	d.Device = f
-	d.DeviceInfo = &f.DeviceInfo
 	return nil
 }
 

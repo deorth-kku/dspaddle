@@ -10,7 +10,7 @@ import (
 	"syscall"
 
 	"github.com/deorth-kku/go-common"
-	"github.com/kpeu3i/gods4"
+	"github.com/deorth-kku/gods4"
 )
 
 func init() {
