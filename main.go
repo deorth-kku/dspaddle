@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"dspaddle/xbox"
 	"log/slog"
 	"os"
@@ -50,19 +51,19 @@ func main() {
 		return
 	}
 
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		<-signals
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer cancel()
+	var wg sync.WaitGroup
+	wg.Go(func() {
+		<-ctx.Done()
 		for i, c := range ds4s {
 			slog.Info("disconnecting dualshock 4", "num", i, "name", c.Name(), "type", c.ConnectionType(), "err", c.Disconnect())
 		}
 		for i, c := range xboxs {
-			slog.Info("disconnecting dualshock 4", "num", i, "name", c.DeviceInfo.Product, "err", c.Disconnect())
+			slog.Info("disconnecting xbox controller", "num", i, "name", c.DeviceInfo.Product, "err", c.Disconnect())
 		}
-	}()
+	})
 
-	var wg sync.WaitGroup
 	for i, ds4 := range ds4s {
 		if len(cfg.Slots) > 0 && !slices.Contains(cfg.Slots, i) {
 			slog.Info("skipping ds4 controller", "num", i)
