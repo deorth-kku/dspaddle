@@ -63,7 +63,7 @@ func (d *Device) Connect() error {
 	return nil
 }
 
-const timeout = 3 // ms
+const timeout = 1000 // ms
 
 func (d *Device) Listen() error {
 	if d.Device == nil {
