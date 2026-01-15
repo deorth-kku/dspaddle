@@ -63,6 +63,8 @@ func (d *Device) Connect() error {
 	return nil
 }
 
+const timeout = 3 // ms
+
 func (d *Device) Listen() error {
 	if d.Device == nil {
 		return common.ErrorString("not connected")
@@ -75,7 +77,7 @@ func (d *Device) Listen() error {
 
 	for !d.exit.Load() {
 		var buf [bufSize]byte
-		n, err := d.Read(buf[:])
+		n, err := d.ReadTimeout(buf[:], timeout)
 		if err != nil {
 			errch <- err
 			return err
@@ -117,7 +119,7 @@ func (d *Device) On(event Event, cb Callback) {
 
 func (d *Device) Disconnect() error {
 	if d.Device == nil {
-		return common.ErrorString("no connected")
+		return common.ErrorString("not connected")
 	}
 	err := d.Device.Close()
 	if err != nil {

@@ -1,6 +1,6 @@
 module dspaddle
 
-go 1.25
+go 1.26rc1
 
 require (
 	github.com/deorth-kku/go-common v0.0.0-20251128053826-d2bae170c0c5
