@@ -1,6 +1,7 @@
 package xbox
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"testing"
@@ -16,11 +17,6 @@ func TestXbox(t *testing.T) {
 		return
 	}
 	dev := devs[0]
-	err := dev.Connect()
-	if err != nil {
-		t.Error(err)
-		return
-	}
 	dev.On(EventLeftPaddlePress, func() {
 		slog.Warn("left pressed")
 	})
@@ -33,14 +29,9 @@ func TestXbox(t *testing.T) {
 	dev.On(EventRightPaddleRelease, func() {
 		slog.Warn("right release")
 	})
-
-	time.AfterFunc(10*time.Second, func() {
-		err := dev.Disconnect()
-		if err != nil {
-			t.Error(err)
-		}
-	})
-	err = dev.Listen()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	err := dev.Listen(ctx)
 	if err != nil {
 		t.Error(err)
 	}
