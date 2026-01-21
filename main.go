@@ -52,7 +52,7 @@ func main() {
 	for {
 		select {
 		case <-ctx.Done():
-			slog.Info("recived signal, exiting normally")
+			slog.Info("recived signal, exiting normally", "cause", context.Cause(ctx))
 			return
 		default:
 			xboxs := xbox.Find()

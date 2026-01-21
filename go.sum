@@ -4,5 +4,7 @@ github.com/deorth-kku/gods4 v0.0.0-20260113021838-7b8e7b55268a h1:uUOWdMw9Xactjx
 github.com/deorth-kku/gods4 v0.0.0-20260113021838-7b8e7b55268a/go.mod h1:+K/+JbRzvK0tXoKnoJEvsPYMTt54TS/jOmXonLnTY0g=
 github.com/deorth-kku/gods4 v0.0.0-20260120073736-7e3a96738cf2 h1:psvZjafUMPvp1GF1EpMJIfNWfIivf9bU7vtB82nx1rs=
 github.com/deorth-kku/gods4 v0.0.0-20260120073736-7e3a96738cf2/go.mod h1:+K/+JbRzvK0tXoKnoJEvsPYMTt54TS/jOmXonLnTY0g=
+github.com/deorth-kku/gods4 v0.0.0-20260121033414-598f28680518 h1:VAR5O4N709ZFEyE3eBS8Bqzh5Vut/Qdynx9X2VRJASs=
+github.com/deorth-kku/gods4 v0.0.0-20260121033414-598f28680518/go.mod h1:+K/+JbRzvK0tXoKnoJEvsPYMTt54TS/jOmXonLnTY0g=
 github.com/karalabe/hid v1.0.1-0.20240919124526-821c38d2678e h1:ryNJIEs1fyZNVwJ/Dsz7+EFZTow0ggBdnAIVo8SAs+A=
 github.com/karalabe/hid v1.0.1-0.20240919124526-821c38d2678e/go.mod h1:qk1sX/IBgppQNcGCRoj90u6EGC056EBoIc1oEjCWla8=
