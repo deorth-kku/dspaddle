@@ -15,12 +15,6 @@ import (
 	"github.com/deorth-kku/gods4"
 )
 
-func init() {
-	if IsDLL {
-		go main()
-	}
-}
-
 func main() {
 	cfg, err := GetConfig()
 	if err != nil {
@@ -36,7 +30,7 @@ func main() {
 	if IsDLL {
 		exe, err := os.Executable()
 		if err == nil {
-			slog.Info("loaded as dll", "exe", exe)
+			slog.Info("loaded as dll", "exe", exe, "pid", os.Getpid())
 		} else {
 			slog.Warn("failed to read exe path", "err", err)
 		}

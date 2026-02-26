@@ -3,3 +3,7 @@
 package main
 
 const IsDLL = true
+
+func init() {
+	go main()
+}
