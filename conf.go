@@ -8,7 +8,7 @@ import (
 	"io/fs"
 	"math"
 	"os"
-	"path"
+	"path/filepath"
 
 	v1 "encoding/json"
 )
@@ -91,13 +91,13 @@ func GetConfig() (*Config, error) {
 	if err != nil {
 		return nil, fmt.Errorf("cannot find exe path err: %w", err)
 	}
-	dir := path.Dir(exe)
-	conf := path.Join(dir, "dspaddle.json")
+	dir := filepath.Dir(exe)
+	conf := filepath.Join(dir, "dspaddle.json")
 	f, err := os.Open(conf)
 	switch {
 	case errors.Is(err, fs.ErrNotExist):
 		appdata := os.Getenv("APPDATA")
-		conf = path.Join(appdata, "dspaddle", "dspaddle.json")
+		conf = filepath.Join(appdata, "dspaddle", "dspaddle.json")
 		f, err = os.Open(conf)
 	case err != nil:
 		return nil, fmt.Errorf("fail when open config file %s, err: %w", conf, err)
