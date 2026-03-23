@@ -87,12 +87,16 @@ type Config struct {
 }
 
 func GetConfig() (*Config, error) {
-	exe, err := os.Executable()
-	if err != nil {
-		return nil, fmt.Errorf("cannot find exe path err: %w", err)
+	conf := os.Getenv("DSPADDLE_CONF")
+	if len(conf) == 0 {
+		exe, err := os.Executable()
+		if err != nil {
+			return nil, fmt.Errorf("cannot find exe path err: %w", err)
+		}
+		dir := filepath.Dir(exe)
+		conf = filepath.Join(dir, "dspaddle.json")
 	}
-	dir := filepath.Dir(exe)
-	conf := filepath.Join(dir, "dspaddle.json")
+
 	f, err := os.Open(conf)
 	switch {
 	case errors.Is(err, fs.ErrNotExist):
