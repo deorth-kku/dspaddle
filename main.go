@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"slices"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -74,7 +75,10 @@ func do(ctx context.Context) {
 			ds4.On(gods4.EventTouchpadSwipe, NewActionState(act).Callback)
 			for k, v := range buttons.Range {
 				slog.Debug("register action", "event", k)
-				ds4.On(gods4.Event(k), v)
+				ds4.On(k, v)
+				if isRelease(k) {
+					defer v(nil)
+				}
 			}
 			slog.Info("ds4 controller listen thread exit", "error", ds4.ListenContext(ctx))
 		})
@@ -96,12 +100,14 @@ func do(ctx context.Context) {
 			slog.Debug("register action", "event", k)
 			event := xbox.ParseEvent(k)
 			if event < 0 {
-				slog.Warn("invalid event, skipping", "event", event)
+				slog.Warn("invalid event, skipping", "event", k)
 				continue
 			}
-			xb.On(event, func() {
-				v(nil)
-			})
+			f := func() { v(nil) }
+			xb.On(event, f)
+			if isRelease(k) {
+				defer f()
+			}
 		}
 
 		wg.Go(func() {
@@ -124,4 +130,8 @@ func main() {
 			do(ctx)
 		}
 	}
+}
+
+func isRelease[T ~string](k T) bool {
+	return strings.HasSuffix(string(k), ".release")
 }
